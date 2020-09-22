@@ -32,13 +32,14 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 	for {
 		var msg Message
 		err := ws.ReadJSON(&msg)
-		valid(msg)
 		if err != nil {
 			log.Printf("error: %v", err)
 			delete(clients, ws)
 			break
 		}
-		broadcast <- msg
+		if validate(msg) {
+			broadcast <- msg
+		}
 	}
 }
 
@@ -67,6 +68,9 @@ func main() {
 	}
 }
 
-func valid(message Message) {
-	log.Println(len(message.Message))
+func validate(message Message) bool {
+	if len(message.Message) > 1 && len(message.Email) > 5 && len(message.Username) > 3 {
+		return true
+	}
+	return false
 }
