@@ -32,6 +32,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 	for {
 		var msg Message
 		err := ws.ReadJSON(&msg)
+		valid(msg)
 		if err != nil {
 			log.Printf("error: %v", err)
 			delete(clients, ws)
@@ -64,4 +65,8 @@ func main() {
 	if err != nil {
 		log.Fatal("ListAndServe: ", err)
 	}
+}
+
+func valid(message Message) {
+	log.Println(len(message.Message))
 }
